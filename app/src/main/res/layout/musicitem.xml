@@ -6,7 +6,10 @@
     <RelativeLayout
         android:id="@+id/rl"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/music_item_height">
+        android:layout_height="@dimen/music_item_height"
+        android:padding="5dip"
+        android:layout_margin="5dip"
+        android:background="@drawable/circle_search_bg">
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -29,7 +32,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Large Text"
                     android:id="@+id/textView"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
@@ -45,7 +47,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
                 android:id="@+id/textView2"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true" />
@@ -57,9 +58,12 @@
             android:layout_height="match_parent"
             android:id="@+id/listen"
             android:text="@string/listen"
+            android:layout_margin="5dip"
+            android:background="@drawable/circle_search_bt_bg"
             android:layout_toLeftOf="@+id/download"
             android:layout_toStartOf="@+id/download"
             android:layout_alignParentTop="true"
+            android:textColor="#fff"
             android:layout_alignBottom="@+id/relativeLayout" />
 
         <Button
@@ -67,9 +71,12 @@
             android:layout_height="match_parent"
             android:id="@+id/download"
             android:text="@string/download"
+            android:layout_margin="5dip"
+            android:background="@drawable/circle_search_bt_bg"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:textColor="#fff"
             android:layout_alignBottom="@+id/relativeLayout" />
 
     </RelativeLayout>

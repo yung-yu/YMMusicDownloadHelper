@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity {
     MusicAdapter musicAdapter;
     ProgressDialog mProgressDialog;
     ProgressBar pb_search_wait;
+    SwipeRefreshLayout swipe_container;
     int backCount = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +45,30 @@ public class MainActivity extends Activity {
         bt_query = (Button) findViewById(R.id.button);
         et_keyWorld = (EditText) findViewById(R.id.editText);
         pb_search_wait = (ProgressBar) findViewById(R.id.progressBar);
+        swipe_container = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         mYouMakerPaser = new YouMakerPaser();
         musicAdapter = new MusicAdapter(this);
         listView.setAdapter(musicAdapter);
-        bt_query.setOnClickListener(new View.OnClickListener(){
+        bt_query.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              String keyWorld = et_keyWorld.getText().toString();
-                if(!keyWorld.isEmpty()){
-                    if(!keyWorld.equals(currentKeyWorld)) {
+                String keyWorld = et_keyWorld.getText().toString();
+                if (!keyWorld.isEmpty()) {
+                    if (!keyWorld.equals(currentKeyWorld)) {
                         bt_query.setVisibility(View.GONE);
                         pb_search_wait.setVisibility(View.VISIBLE);
                         currentKeyWorld = keyWorld;
-                        mYouMakerPaser.query(keyWorld);
+                        musicAdapter.reset();
+                        mYouMakerPaser.query(keyWorld,musicAdapter.getPage());
                     }
                 }
+            }
+        });
+
+        swipe_container.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh() {
+                mYouMakerPaser.query(currentKeyWorld,musicAdapter.getPage());
             }
         });
 
@@ -69,12 +80,20 @@ public class MainActivity extends Activity {
         backCount = 0;
         mYouMakerPaser.setOnDataUpdateListener(new YouMakerPaser.OnDataUpdateListener(){
             @Override
-            public void onDataUpdate(List<Music> data, final String msg) {
+            public void onDataUpdate(final List<Music> data, final String msg) {
                if(data!=null){
                    musicAdapter.setData(data);
                    runOnUiThread(new Runnable() {
                        @Override
                        public void run() {
+                           if(data.size()==0){
+                               Toast.makeText(MainActivity.this,getString(R.string.no_update),Toast.LENGTH_SHORT).show();
+                           }else{
+                               Toast.makeText(MainActivity.this,getString(R.string.update_success),Toast.LENGTH_SHORT).show();
+                           }
+                           if(swipe_container.isRefreshing()){
+                               swipe_container.setRefreshing(false);
+                           }
                            bt_query.setVisibility(View.VISIBLE);
                            pb_search_wait.setVisibility(View.GONE);
                            et_keyWorld.setText("");
@@ -131,18 +150,42 @@ public class MainActivity extends Activity {
     public class MusicAdapter extends BaseAdapter{
         Context context;
         List<Music> data;
-
+        int page = 1;
         public List<Music> getData() {
             return data;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public void setPage(int page) {
+            this.page = page;
         }
 
         public Context getContext() {
             return context;
         }
-
+        public void reset(){
+            this.data = null;
+            this.page = 1;
+        }
 
         public void setData(List<Music> data) {
-            this.data = data;
+            if(data==null){
+                return;
+            }
+            if(this.data==null){
+                if(data.size()>0) {
+                    page++;
+                    this.data = data;
+                }
+            }else {
+                if(data.size()>0){
+                    page++;
+                    this.data.addAll(0,data);
+                }
+            }
         }
 
         public void setContext(Context context) {
@@ -198,75 +241,96 @@ public class MainActivity extends Activity {
             vh.tryListen.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    getProgressDialog().setMessage(getString(R.string.data_loading));
-                    getProgressDialog().show();
-                    mYouMakerPaser.findMP3(data.get(position),position,
-                            new YouMakerPaser.MusicCallBack(){
-                                @Override
-                                public void onSuccess(int position,String url) {
-                                    data.get(position).setMp3Url(url);
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setDataAndType(Uri.parse(url), "audio/*");
-                                    context.startActivity(intent);
-                                    MainActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            getProgressDialog().cancel();
-                                        }
-                                    });
+                    if(!data.get(position).isHasDownloadFlag()) {
+                        getProgressDialog().setMessage(getString(R.string.data_loading));
+                        getProgressDialog().show();
+                        mYouMakerPaser.findMP3(data.get(position), position,
+                                new YouMakerPaser.MusicCallBack() {
+                                    @Override
+                                    public void onSuccess(int position, String url) {
 
-                                }
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        intent.setDataAndType(Uri.parse(url), "audio/*");
+                                        context.startActivity(intent);
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getProgressDialog().cancel();
+                                            }
+                                        });
 
-                                @Override
-                                public void onFiled(final String msg) {
-                                    MainActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            getProgressDialog().cancel();
-                                            Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                    }
 
-                                }
-                            });
+                                    @Override
+                                    public void onFiled(final String msg) {
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getProgressDialog().cancel();
+                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                    }
+                                });
+
+                    }else{
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+
+                        intent.setDataAndType(Uri.fromFile(new File(data.get(position).getFilePath())), "audio/*");
+                        context.startActivity(intent);
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getProgressDialog().cancel();
+                            }
+                        });
+                    }
                 }
             });
-            vh.download.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    getProgressDialog().setMessage(getString(R.string.data_loading));
-                    getProgressDialog().show();
-                    mYouMakerPaser.findMP3(data.get(position),position,
-                            new YouMakerPaser.MusicCallBack()
-                            {
-                                @Override
-                                public void onSuccess(final int position,final String url) {
-                                    data.get(position).setMp3Url(url);
-                                    MainActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            getProgressDialog().cancel();
-                                            showDownloadDialog(data.get(position), url);
-                                        }
-                                    });
+            if(!data.get(position).isHasDownloadFlag()) {
+                vh.download.setSelected(false);
+                vh.download.setText(R.string.download);
+                vh.download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                                }
+                        getProgressDialog().setMessage(getString(R.string.data_loading));
+                        getProgressDialog().show();
+                        mYouMakerPaser.findMP3(data.get(position), position,
+                                new YouMakerPaser.MusicCallBack() {
+                                    @Override
+                                    public void onSuccess(final int position, final String url) {
 
-                                @Override
-                                public void onFiled(final String msg) {
-                                    MainActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            getProgressDialog().cancel();
-                                            Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getProgressDialog().cancel();
+                                                showDownloadDialog(data.get(position), url);
+                                            }
+                                        });
 
-                                }
-                            });
+                                    }
 
-                }
-            });
+                                    @Override
+                                    public void onFiled(final String msg) {
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getProgressDialog().cancel();
+                                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                    }
+                                });
+
+                    }
+                });
+            }else{
+                vh.download.setText(R.string.had_download);
+                vh.download.setSelected(true);
+            }
             return convertView;
         }
     }
@@ -281,7 +345,7 @@ public class MainActivity extends Activity {
                                &&downloaddialog.getCurrentFileName().endsWith(".mp3")) {
                            dialog.cancel();
                            String path = downloaddialog.getCurrentFilePath();
-                           new DownloadTask(MainActivity.this)
+                           new DownloadTask(MainActivity.this,music,musicAdapter)
                                    .execute(
                                            url,
                                            path ,

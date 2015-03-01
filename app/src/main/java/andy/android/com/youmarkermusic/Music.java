@@ -9,7 +9,7 @@ public  class Music{
     String musicTime;
     String mp3Url;
     String filePath;
-    String keyWorld;
+    boolean isHasDownloadFlag = false;
     public Music (){
 
     }
@@ -43,5 +43,21 @@ public  class Music{
 
     public void setMp3Url(String mp3Url) {
         this.mp3Url = mp3Url;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public boolean isHasDownloadFlag() {
+        return isHasDownloadFlag;
+    }
+
+    public void setHasDownloadFlag(boolean isDownloadFlag) {
+        this.isHasDownloadFlag = isDownloadFlag;
     }
 }

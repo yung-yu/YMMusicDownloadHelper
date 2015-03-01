@@ -16,4 +16,7 @@
     <string name="download_success">下載成功</string>
     <string name="download_fail">下載失敗</string>
     <string name="download_wait">下載中,請稍後...</string>
+    <string name="had_download">已下載</string>
+    <string name="update_success">更新成功</string>
+    <string name="no_update">無更新</string>
 </resources>

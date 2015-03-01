@@ -6,6 +6,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,21 +27,28 @@ public class YouMakerPaser {
 
     public  static final String SerachURL = "/search?&sk=";
     public static final String musicParm = "&t=&flvflag=1";
+    public static final String PAGE = "&page=";
 
-    public  void query(String key){
-       final String url = YOUMAKER_URL+SerachURL+key+musicParm;
+    public  void query(String key,int page){
+       final String url = YOUMAKER_URL+SerachURL+key+musicParm+PAGE+page;
        new Thread(new Runnable() {
            @Override
            public void run() {
                try {
+                   HttpParams httpParams = new BasicHttpParams();
+                   //設定timeout 30s
+                   HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
                    HttpClient client = new DefaultHttpClient();
                    HttpGet get = new HttpGet(url);
                    HttpResponse response = client.execute(get);
                    if(response.getStatusLine().getStatusCode()==200) {
                        Document doc = Jsoup.parse(response.getEntity().getContent(),"utf8",url);
+
+                       List<Music> data = new ArrayList<Music>();
+
                        Elements list = doc.getElementsByClass("newslistsearchtextrighttitle");
                        Music music;
-                       List<Music> data = new ArrayList<Music>();
+
                        for (Element e : list) {
                            if(e.getElementsByClass("redcolor").get(0).text().equals("(音)")) {
                                music = new Music();
@@ -68,8 +78,8 @@ public class YouMakerPaser {
                }
            }
        }).start();
-
     }
+
     public interface OnDataUpdateListener{
         void onDataUpdate( List<Music> data ,String msg );
 
@@ -112,8 +122,10 @@ public class YouMakerPaser {
 
                         }
                         if (callBack != null) {
-                            if (urls.size() > 0)
-                                callBack.onSuccess(position,urls.get(0));
+                            if (urls.size() > 0) {
+                                music.setMp3Url( urls.get(0));
+                                callBack.onSuccess(position, urls.get(0));
+                            }
                             else {
                                 callBack.onFiled("not found mp3!");
                             }
@@ -142,7 +154,5 @@ public class YouMakerPaser {
         }).start();
     }
 
-   public void downloadMp3(String url){
 
-   }
 }

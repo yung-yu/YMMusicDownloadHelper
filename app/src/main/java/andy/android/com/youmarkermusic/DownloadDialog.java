@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Environment;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +85,7 @@ public class DownloadDialog extends AlertDialog.Builder {
                 final EditText et =new EditText(context);
                 et.setTextColor(Color.BLUE);
                 et.setGravity(Gravity.CENTER);
-                et.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.dialog_textSize));
+                et.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20);
                 et.setText("新資料夾");
                 ab.setView(et);
                 ab.setPositiveButton(R.string.alert_ok,new DialogInterface.OnClickListener(){

@@ -22,11 +22,12 @@ public final class DownloadTask extends AsyncTask<String, String, String> {
     private ProgressDialog dialog;
 
     private Context context = null;
-
-
-    public DownloadTask(Context c){
+    private Music music;
+    private MainActivity.MusicAdapter adapter;
+    public DownloadTask(Context c ,Music music,MainActivity.MusicAdapter adapter){
         this.context = c;
-
+        this.music = music;
+        this.adapter = adapter;
         dialog = new ProgressDialog(context);
     }
     protected void onPreExecute() {
@@ -43,6 +44,7 @@ public final class DownloadTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
         int count;
+        String filePath = "";
         try {
             URL url = new URL(params[0]);
             URLConnection conection = url.openConnection();
@@ -53,6 +55,7 @@ public final class DownloadTask extends AsyncTask<String, String, String> {
             File file = new File(params[1],params[2]);
             if(!file.exists())
                 file.createNewFile();
+            filePath = file.getAbsolutePath();
             OutputStream output = new FileOutputStream(file.getAbsolutePath());
             byte data[] = new byte[1024];
             long total = 0;
@@ -71,6 +74,12 @@ public final class DownloadTask extends AsyncTask<String, String, String> {
             return context.getString(R.string.download_fail)+"\n"+e.toString();
 
         }
+        if(music!=null){
+            if(filePath.length()>0) {
+                music.setHasDownloadFlag(true);
+                music.setFilePath(filePath);
+            }
+        }
         return context.getString(R.string.download_success);
     }
 
@@ -81,6 +90,8 @@ public final class DownloadTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        if(adapter!=null)
+            adapter.notifyDataSetChanged();
         dialog.cancel();
         Toast.makeText(context,s,Toast.LENGTH_SHORT).show();
     }
