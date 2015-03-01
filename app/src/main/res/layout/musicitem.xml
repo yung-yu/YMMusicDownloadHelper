@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/music_item_height">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/music_item_height"
+            android:layout_toLeftOf="@+id/listen"
+            android:layout_toStartOf="@+id/listen"
+            android:id="@+id/relativeLayout">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/horizontalScrollView"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:fillViewport="false"
+                android:scrollbars="none"
+                android:layout_above="@+id/textView2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/textView"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:layout_above="@+id/textView2"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/textView2"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="@dimen/music_item_bt_width"
+            android:layout_height="match_parent"
+            android:id="@+id/listen"
+            android:text="@string/listen"
+            android:layout_toLeftOf="@+id/download"
+            android:layout_toStartOf="@+id/download"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/relativeLayout" />
+
+        <Button
+            android:layout_width="@dimen/music_item_bt_width"
+            android:layout_height="match_parent"
+            android:id="@+id/download"
+            android:text="@string/download"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/relativeLayout" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

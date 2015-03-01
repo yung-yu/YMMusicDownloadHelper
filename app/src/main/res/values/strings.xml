@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">YouMarkerMusic</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="query">搜尋</string>
+    <string name="add_dirctory">新增資料夾</string>
+    <string name="listen">試聽</string>
+    <string name="download">下載</string>
+    <string name="alert_ok">確定</string>
+    <string name="alert_cancel">取消</string>
+    <string name="search_hint">請輸入歌名或歌手...</string>
+    <string name="search_keyword_waiting">搜尋中...</string>
+    <string name="data_loading">資料載入中...</string>
+    <string name="back_tip">再按一次返回鍵離開</string>
+    <string name="download_success">下載成功</string>
+    <string name="download_fail">下載失敗</string>
+    <string name="download_wait">下載中,請稍後...</string>
+</resources>

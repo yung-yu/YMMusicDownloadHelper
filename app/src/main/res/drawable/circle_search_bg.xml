@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item >
+    <shape>
+        <solid
+            android:color="@color/search_bg"
+            />
+        <corners
+            android:radius="5dip"
+            />
+        </shape>
+  </item>
+    <item
+        android:left="5dip"
+        android:right="5dip"
+        android:top="5dip"
+        android:bottom="5dip"
+        >
+    <shape
+        >
+        <solid
+            android:color="#ffffff"
+            />
+        <corners
+            android:radius="5dip"
+            />
+    </shape>
+</item>
+</layer-list>
