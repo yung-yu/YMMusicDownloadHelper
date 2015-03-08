@@ -70,6 +70,7 @@ public class DownloadDialog extends AlertDialog.Builder {
         iv_back = (ImageView) view.findViewById(R.id.imageView3);
         et_name = (EditText) view.findViewById(R.id.fileName);
         tv_path = (TextView) view.findViewById(R.id.path);
+        setTitle(R.string.select_dircs);
         fileAdapter = new FileAdapter(context,fileList);
         listview.setAdapter(fileAdapter);
         setView(view);

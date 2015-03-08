@@ -46,6 +46,13 @@ public class YouMakerPaser {
 
                        List<Music> data = new ArrayList<Music>();
 
+
+                        if(checkEmptyReult(doc)){
+                            if(onDataUpdateListener!=null)
+                                onDataUpdateListener.onDataUpdate(null,2,"");
+                            return ;
+                        }
+
                        Elements list = doc.getElementsByClass("newslistsearchtextrighttitle");
                        Music music;
 
@@ -57,31 +64,36 @@ public class YouMakerPaser {
                                music.setUrl(YOUMAKER_URL + "/" + item_a.attr("href"));
                                music.setMusicTime(e.getElementsByTag("small").text());
                                data.add(music);
-                               Log.d("music", music.getName());
-                               Log.d("music", music.getUrl());
+
                            }
                        }
                        if (onDataUpdateListener != null)
-                           onDataUpdateListener.onDataUpdate(data, "update Success");
+                           onDataUpdateListener.onDataUpdate(data,0, "update Success");
                    }else{
                        if(onDataUpdateListener!=null)
-                           onDataUpdateListener.onDataUpdate(null,response.getStatusLine().getReasonPhrase());
+                           onDataUpdateListener.onDataUpdate(null,response.getStatusLine().getStatusCode(),response.getStatusLine().getReasonPhrase());
                    }
                } catch (IOException e) {
                    e.printStackTrace();
                    if(onDataUpdateListener!=null)
-                       onDataUpdateListener.onDataUpdate(null,e.toString());
+                       onDataUpdateListener.onDataUpdate(null,-1,e.toString());
                }catch (Exception e){
                    e.printStackTrace();
                    if(onDataUpdateListener!=null)
-                       onDataUpdateListener.onDataUpdate(null,e.toString());
+                       onDataUpdateListener.onDataUpdate(null,-1,e.toString());
                }
            }
        }).start();
     }
-
+    public boolean checkEmptyReult(Document doc){
+        Elements container_25 = doc.getElementsByClass("container_25");
+        if(container_25.text().contains("沒有找到您搜索的內容")){
+            return true;
+        }
+        return false;
+    }
     public interface OnDataUpdateListener{
-        void onDataUpdate( List<Music> data ,String msg );
+        void onDataUpdate( List<Music> data ,int returnCode, String msg );
 
     }
 

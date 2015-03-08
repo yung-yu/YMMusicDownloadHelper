@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.List;
 
 
+
 public class MainActivity extends Activity {
     ListView listView;
     Button bt_query;
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
     ProgressBar pb_search_wait;
     SwipeRefreshLayout swipe_container;
     int backCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,9 @@ public class MainActivity extends Activity {
         et_keyWorld = (EditText) findViewById(R.id.editText);
         pb_search_wait = (ProgressBar) findViewById(R.id.progressBar);
         swipe_container = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+
         mYouMakerPaser = new YouMakerPaser();
+
         musicAdapter = new MusicAdapter(this);
         listView.setAdapter(musicAdapter);
         bt_query.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +84,7 @@ public class MainActivity extends Activity {
         backCount = 0;
         mYouMakerPaser.setOnDataUpdateListener(new YouMakerPaser.OnDataUpdateListener(){
             @Override
-            public void onDataUpdate(final List<Music> data, final String msg) {
+            public void onDataUpdate(final List<Music> data, final int returnCode ,final String msg) {
                if(data!=null){
                    musicAdapter.setData(data);
                    runOnUiThread(new Runnable() {
@@ -108,8 +112,12 @@ public class MainActivity extends Activity {
                        public void run() {
                            bt_query.setVisibility(View.VISIBLE);
                            pb_search_wait.setVisibility(View.GONE);
+                           if(swipe_container.isRefreshing()){
+                               swipe_container.setRefreshing(false);
+                           }
                            musicAdapter.notifyDataSetChanged();
-                           Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT).show();
+                           if(returnCode!=2)
+                            Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT).show();
 
                        }
                    });
@@ -175,6 +183,7 @@ public class MainActivity extends Activity {
             if(data==null){
                 return;
             }
+
             if(this.data==null){
                 if(data.size()>0) {
                     page++;

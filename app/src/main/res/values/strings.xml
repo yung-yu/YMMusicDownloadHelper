@@ -19,4 +19,5 @@
     <string name="had_download">已下載</string>
     <string name="update_success">更新成功</string>
     <string name="no_update">無更新</string>
+    <string name="select_dircs">選擇儲存位置</string>
 </resources>
