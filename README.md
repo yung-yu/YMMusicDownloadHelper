@@ -15,13 +15,14 @@
 ###利用 git clone ,再使用Android Studio用open an existing Android Studio project開啓專案。
 
 <br/>
- 
-##手機掃描QRCode下載APK
----
-![](img/apkUrl.png)  
-   
-<br/>
 ##參考
 ---
 ###[Jsoup](http://jsoup.org/)
+<br/>
+ 
+##掃描QRCode下載APK
+---
+![](img/apkUrl.png)  
+   
+
    
